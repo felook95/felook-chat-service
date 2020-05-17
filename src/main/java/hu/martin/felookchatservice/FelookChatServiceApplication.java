@@ -10,4 +10,6 @@ public class FelookChatServiceApplication {
         SpringApplication.run(FelookChatServiceApplication.class, args);
     }
 
+
+
 }
