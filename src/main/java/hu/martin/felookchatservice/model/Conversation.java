@@ -3,22 +3,25 @@ package hu.martin.felookchatservice.model;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.util.Set;
+import java.util.UUID;
+
 @Data
-@Table("message")
+@Table("conversation")
 @Accessors(chain = true)
-public class Message {
+public class Conversation {
 
     @Id
     @Column("id")
     private Long id;
 
-    @Column("text")
-    private String text;
+    @Column("public_id")
+    private UUID publicId;
 
-
-    private Conversation conversation;
-
+    @Transient
+    private Set<User> users;
 }

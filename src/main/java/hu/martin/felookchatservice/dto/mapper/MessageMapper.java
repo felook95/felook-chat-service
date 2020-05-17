@@ -10,6 +10,7 @@ public class MessageMapper {
     public static MessageDto toMessageDto(Message message) {
         return new MessageDto()
                 .setId(message.getId())
-                .setText(message.getText());
+                .setText(message.getText())
+                .setConversation(message.getConversation());
     }
 }
