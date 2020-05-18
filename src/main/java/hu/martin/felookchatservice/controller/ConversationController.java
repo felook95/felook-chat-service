@@ -38,4 +38,9 @@ public class ConversationController {
         return conversationService.addMessage(messageDto);
     }
 
+    @GetMapping("/{id}/message")
+    public Flux<MessageDto> getMessagesForConversation(@PathVariable Long id) {
+        return conversationService.getAllMessageForConversation(id);
+    }
+
 }

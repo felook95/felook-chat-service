@@ -9,7 +9,7 @@ import hu.martin.felookchatservice.model.Conversation;
 import hu.martin.felookchatservice.model.Message;
 import hu.martin.felookchatservice.model.User;
 import hu.martin.felookchatservice.repository.ConversationRepository;
-import hu.martin.felookchatservice.repository.ConversationRepositoryWithReactiveCrud;
+import hu.martin.felookchatservice.repository.CustomizedConversationRepositoryImpl;
 import hu.martin.felookchatservice.repository.MessageRepository;
 import hu.martin.felookchatservice.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
@@ -30,16 +30,14 @@ public class ConversationServiceImpl implements ConversationService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
-    private final ConversationRepositoryWithReactiveCrud withReactiveCrud;
 
     public ConversationServiceImpl(ConversationRepository conversationRepository,
                                    MessageRepository messageRepository,
-                                   UserRepository userRepository,
-                                   ConversationRepositoryWithReactiveCrud withReactiveCrud) {
+                                   UserRepository userRepository
+    ) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
-        this.withReactiveCrud = withReactiveCrud;
     }
 
     @Override
@@ -74,7 +72,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Mono<ConversationDto> getConversation(Long id) {
-        return withReactiveCrud.getConversation(id).map(ConversationMapper::toConversationDto);
+        return conversationRepository.getConversation(id).map(ConversationMapper::toConversationDto);
     }
 
     @Override
@@ -98,7 +96,6 @@ public class ConversationServiceImpl implements ConversationService {
             Mono<Message> messageMono = messageRepository.save(messageToSave);
             return messageMono.map(message -> {
                 message
-                        .setConversation(conversation)
                         .setUser(user);
                 return MessageMapper.toMessageDto(message);
             });
@@ -107,6 +104,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Flux<MessageDto> getAllMessageForConversation(Long conversationId) {
-        return null;
+        return conversationRepository.findMessagesByConversationId(conversationId)
+                .map(MessageMapper::toMessageDto);
     }
 }

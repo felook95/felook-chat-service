@@ -11,7 +11,7 @@ public class MessageMapper {
         return new MessageDto()
                 .setId(message.getId())
                 .setText(message.getText())
-                .setConversation(message.getConversation())
+                .setConversation(ConversationMapper.toConversationDto(message.getConversation()))
                 .setUser(UserMapper.toUserDto(message.getUser()));
     }
 }

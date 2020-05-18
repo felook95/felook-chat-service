@@ -26,9 +26,9 @@ public class Message {
     private Long conversationId;
 
     @Transient
-    private Conversation conversation;
+    private User user;
 
     @Transient
-    private User user;
+    private Conversation conversation;
 
 }

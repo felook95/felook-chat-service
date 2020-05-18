@@ -7,7 +7,7 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ConversationRepository extends ReactiveCrudRepository<Conversation, Long> {
+public interface ConversationRepository extends ReactiveCrudRepository<Conversation, Long>, CustomizedConversationRepository {
 
     @Query("insert ignore into sw_conversation_user(conversation_id, user_id) values(:conversationId, :userId)")
     Mono<Void> addUserToConversation(Long conversationId, Long userId);
