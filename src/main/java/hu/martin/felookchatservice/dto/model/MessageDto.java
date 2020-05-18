@@ -16,4 +16,6 @@ public class MessageDto {
 
     private Conversation conversation;
 
+    private UserDto user;
+
 }
