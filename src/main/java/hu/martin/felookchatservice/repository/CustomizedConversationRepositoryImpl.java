@@ -28,7 +28,6 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                 .fetch()
                 .first()
                 .flatMap(conversation -> databaseClient
-                        //.execute("select * from user join sw_conversation_user on user.id=sw_conversation_user.user_id where sw_conversation_user.conversation_id=:conversationId")
                         .execute("""
                                 select * from user join sw_conversation_user
                                 on user.id=sw_conversation_user.user_id 
