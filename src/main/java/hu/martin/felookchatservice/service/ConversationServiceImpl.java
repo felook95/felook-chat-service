@@ -9,7 +9,6 @@ import hu.martin.felookchatservice.model.Conversation;
 import hu.martin.felookchatservice.model.Message;
 import hu.martin.felookchatservice.model.User;
 import hu.martin.felookchatservice.repository.ConversationRepository;
-import hu.martin.felookchatservice.repository.CustomizedConversationRepositoryImpl;
 import hu.martin.felookchatservice.repository.MessageRepository;
 import hu.martin.felookchatservice.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,30 +40,28 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Mono<ConversationDto> createConversation(ConversationDto conversationDto) {
-        Conversation conversationToSave = new Conversation();
-        conversationToSave.setPublicId(UUID.randomUUID());
-        conversationToSave.setUsers(new HashSet<>());
-
-        Mono<Conversation> conversationMono = conversationRepository.save(conversationToSave);
-
         Set<Long> userIds = conversationDto.getUsers().parallelStream()
                 .mapToLong(UserDto::getId)
                 .boxed()
                 .collect(Collectors.toSet());
 
-        Mono<Set<User>> users = userRepository.findAllById(userIds).collect(Collectors.toSet());
+        return userRepository
+                .findAllById(userIds)
+                .collect(Collectors.toSet())
+                .flatMap(users -> {
+                    Conversation conversationToSave = new Conversation();
+                    conversationToSave.setPublicId(UUID.randomUUID());
+                    conversationToSave.setUsers(users);
+                    return conversationRepository.saveConversation(conversationToSave);
+                })
+                .map(ConversationMapper::toConversationDto);
 
-        return Mono.zip(conversationMono, users, (conversation, usersSet) -> {
-            usersSet.forEach(user -> conversationRepository.addUserToConversation(conversation.getId(), user.getId()));
-            usersSet.forEach(user -> conversation.getUsers().add(user));
-            return ConversationMapper.toConversationDto(conversation);
-        });
     }
 
     @Override
     public Flux<ConversationDto> getAllConversation() {
         return conversationRepository.findAll()
-                .flatMap(conversation -> userRepository.findUsersForConversation(conversation.getId())
+                .flatMap(conversation -> conversationRepository.findUsersForConversation(conversation.getId())
                         .collect(Collectors.toSet()).map(conversation::setUsers))
                 .flatMap(conversation -> Mono.just(ConversationMapper.toConversationDto(conversation)));
     }
