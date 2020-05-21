@@ -3,6 +3,17 @@ create table conversation
     id        int  not null auto_increment primary key,
     public_id uuid not null
 );
+create table application_user
+(
+    id                         int         not null auto_increment primary key,
+    password                   varchar(60) not null,
+    username                   varchar(20) not null unique,
+    role                       varchar     not null,
+    is_account_non_expired     boolean     not null,
+    is_account_non_locked      boolean     not null,
+    is_credentials_non_expired boolean     not null,
+    is_enabled                 boolean     not null
+);
 create table user
 (
     id       int         not null auto_increment primary key,

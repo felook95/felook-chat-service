@@ -84,13 +84,9 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                         .fetch()
                         .first()
                         .map(message::setUser))
-                .flatMap(message -> databaseClient
-                        .execute("select * from conversation where id=:conversationId")
-                        .bind("conversationId", message.getConversationId())
-                        .as(Conversation.class)
-                        .fetch()
-                        .first()
-                        .map(message::setConversation));
+                .flatMap(message ->
+                        getConversation(conversationId)
+                                .map(message::setConversation));
     }
 
     @Override
@@ -128,12 +124,6 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                         .using(switchConversationUser)
                         .map((row, rowMetadata) -> switchConversationUser.setId(Long.valueOf(row.get("id", Integer.class))))
                         .first()));
-//        return databaseClient
-//                .insert()
-//                .into(SwitchConversationUser.class)
-//                .using(switchConversationUser)
-//                .map((row, rowMetadata) -> switchConversationUser.setId(Long.valueOf(row.get("id", Integer.class))))
-//                .first();
 
     }
 }

@@ -79,7 +79,7 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Mono<MessageDto> addMessage(MessageDto messageDto) {
-        Mono<Conversation> conversationMono = conversationRepository.findById(messageDto.getConversation().getId());
+        Mono<Conversation> conversationMono = conversationRepository.getConversation(messageDto.getConversation().getId());
         Mono<User> userMono = userRepository.findById(messageDto.getUser().getId());
 
         return conversationMono.flatMap(conversation -> userMono.flatMap(user -> {
@@ -87,12 +87,12 @@ public class ConversationServiceImpl implements ConversationService {
                     .setId(null)
                     .setText(messageDto.getText())
                     .setConversationId(conversation.getId())
-                    .setUserId(user.getId());
+                    .setUserId(user.getId())
+                    .setConversation(conversation);
 
             Mono<Message> messageMono = messageRepository.save(messageToSave);
             return messageMono.map(message -> {
-                message
-                        .setUser(user);
+                message.setUser(user);
                 return MessageMapper.toMessageDto(message);
             });
         }));
