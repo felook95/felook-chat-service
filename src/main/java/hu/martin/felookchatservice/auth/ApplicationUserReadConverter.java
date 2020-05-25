@@ -13,15 +13,15 @@ public class ApplicationUserReadConverter implements Converter<Row, ApplicationU
     public ApplicationUser convert(@Nonnull Row row) {
         String role = row.get("role", String.class);
         ApplicationUser applicationUser = new ApplicationUser(
-                row.get("id", Long.class),
+                Long.valueOf(row.get("id", Integer.class)),
                 row.get("password", String.class),
                 row.get("username", String.class),
                 role,
                 ApplicationUserRole.valueOf(role).getGrantedAuthorities(),
-                row.get("is_account_non_expired", boolean.class),
-                row.get("is_account_non_locked", boolean.class),
-                row.get("is_credentials_non_expired", boolean.class),
-                row.get("is_enabled", boolean.class)
+                row.get("is_account_non_expired", Boolean.class),
+                row.get("is_account_non_locked", Boolean.class),
+                row.get("is_credentials_non_expired", Boolean.class),
+                row.get("is_enabled", Boolean.class)
 
         );
         return applicationUser;

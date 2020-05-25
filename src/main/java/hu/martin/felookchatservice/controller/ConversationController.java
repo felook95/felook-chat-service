@@ -2,7 +2,6 @@ package hu.martin.felookchatservice.controller;
 
 import hu.martin.felookchatservice.dto.model.ConversationDto;
 import hu.martin.felookchatservice.dto.model.MessageDto;
-import hu.martin.felookchatservice.model.Conversation;
 import hu.martin.felookchatservice.service.ConversationService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;

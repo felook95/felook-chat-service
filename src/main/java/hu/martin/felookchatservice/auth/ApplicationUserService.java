@@ -1,6 +1,5 @@
 package hu.martin.felookchatservice.auth;
 
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

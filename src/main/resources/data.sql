@@ -3,7 +3,7 @@ values (1, 'felook');
 
 insert into application_user(password, username, role, is_account_non_expired, is_account_non_locked,
                              is_credentials_non_expired, is_enabled)
-values ('asssssssssssfffffffffff', 'felook', 'USER', 1, 1, 1, 1);
+values ('$2a$10$PA71gwGxLItmQufh176m2u5W9RJTqdIb/uD/6fpw9GVHURyoREuZC', 'felook', 'ADMIN', 1, 1, 1, 1);
 
 insert into conversation(id, public_id)
 values (1, 'fd5ff013-69de-4666-bf5a-695d9cdcc016');
