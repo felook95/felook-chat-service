@@ -1,0 +1,13 @@
+package hu.martin.felookchatservice.auth;
+
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
+
+import javax.annotation.Nonnull;
+
+public interface RegistrationHandler {
+
+    @Nonnull
+    Mono<ServerResponse> registerApplicationUser(ServerRequest request);
+}

@@ -15,7 +15,9 @@ public class ApplicationUserRepositoryImpl implements CustomizedApplicationUserR
 
     @Override
     public Mono<Boolean> existsByUsername(String username) {
-        // TODO: 2020. 05. 26. write sql
-        return databaseClient.execute("").map((row, rowMetadata) -> row).first().hasElement();
+        return databaseClient.execute("select * from application_user where username=:username")
+                .bind("username", username)
+                .map((row, rowMetadata) -> row)
+                .first().hasElement();
     }
 }
