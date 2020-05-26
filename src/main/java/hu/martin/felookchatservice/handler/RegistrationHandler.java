@@ -1,4 +1,4 @@
-package hu.martin.felookchatservice.auth;
+package hu.martin.felookchatservice.handler;
 
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;

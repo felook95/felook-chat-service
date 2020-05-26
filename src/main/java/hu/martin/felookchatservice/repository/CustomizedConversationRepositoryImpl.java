@@ -9,6 +9,7 @@ import io.r2dbc.spi.RowMetadata;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -33,7 +34,11 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                 .insert()
                 .into(Conversation.class)
                 .using(conversation)
-                .map((row, rowMetadata) -> (Long.valueOf(row.get("id", Integer.class))))
+                .map((row, rowMetadata) -> {
+                    Integer id = row.get("id", Integer.class);
+                    Assert.notNull(id, "Id must not be null!");
+                    return (Long.valueOf(id));
+                })
                 .first()
                 .flatMap(conversationId -> {
                     conversation.setId(conversationId);
@@ -41,9 +46,7 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                     return Flux.fromIterable(conversation.getUsers())
                             .flatMap(user -> addUserToConversation(conversationId, user.getId()))
                             .collectList()
-                            .map(switchConversationUsers -> {
-                                return conversation;
-                            });
+                            .map(switchConversationUsers -> conversation);
                 });
     }
 
@@ -122,7 +125,11 @@ public class CustomizedConversationRepositoryImpl implements CustomizedConversat
                         .insert()
                         .into(SwitchConversationUser.class)
                         .using(switchConversationUser)
-                        .map((row, rowMetadata) -> switchConversationUser.setId(Long.valueOf(row.get("id", Integer.class))))
+                        .map((row, rowMetadata) -> {
+                            Integer id = row.get("id", Integer.class);
+                            Assert.notNull(id, "Id must not be null!");
+                            return switchConversationUser.setId(Long.valueOf(id));
+                        })
                         .first()));
 
     }
