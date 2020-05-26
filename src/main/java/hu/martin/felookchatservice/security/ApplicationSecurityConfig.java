@@ -15,6 +15,7 @@ public class ApplicationSecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
+                .csrf().disable()
                 .authorizeExchange()
                 .pathMatchers("/registration").permitAll()
                 .anyExchange()

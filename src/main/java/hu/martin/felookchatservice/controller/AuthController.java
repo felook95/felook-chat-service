@@ -1,6 +1,6 @@
 package hu.martin.felookchatservice.controller;
 
-import hu.martin.felookchatservice.auth.ApplicationUserService;
+import hu.martin.felookchatservice.auth.ApplicationUserServiceImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +14,9 @@ import reactor.core.publisher.Mono;
 @PreAuthorize("hasRole('ADMIN')")
 public class AuthController {
 
-    private final ApplicationUserService applicationUserService;
+    private final ApplicationUserServiceImpl applicationUserService;
 
-    public AuthController(ApplicationUserService applicationUserService) {
+    public AuthController(ApplicationUserServiceImpl applicationUserService) {
         this.applicationUserService = applicationUserService;
     }
 

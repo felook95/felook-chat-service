@@ -1,6 +1,9 @@
 package hu.martin.felookchatservice.auth;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -11,37 +14,40 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Set;
 
+@Data
+@NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @Table("application_user")
 public class ApplicationUser implements UserDetails {
 
     @Id
     @Column("id")
-    private final Long id;
+    private Long id;
 
     @Column("password")
-    private final String password;
+    private String password;
 
     @Column("username")
-    private final String username;
+    private String username;
 
     @Column("role")
-    private final String role;
+    private String role;
 
     @Transient
-    private final Set<? extends GrantedAuthority> grantedAuthorities;
+    private Set<? extends GrantedAuthority> grantedAuthorities;
 
     @Column("is_account_non_expired")
-    private final boolean isAccountNonExpired;
+    private boolean isAccountNonExpired;
 
     @Column("is_account_non_locked")
-    private final boolean isAccountNonLocked;
+    private boolean isAccountNonLocked;
 
     @Column("is_credentials_non_expired")
-    private final boolean isCredentialsNonExpired;
+    private boolean isCredentialsNonExpired;
 
     @Column("is_enabled")
-    private final boolean isEnabled;
+    private boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
