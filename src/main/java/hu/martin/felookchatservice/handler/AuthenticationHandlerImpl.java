@@ -5,6 +5,7 @@ import hu.martin.felookchatservice.jwt.JWTUtil;
 import hu.martin.felookchatservice.jwt.JwtConfig;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
@@ -21,7 +22,7 @@ import java.time.Duration;
 
 @Component
 @Log4j2
-public class LoginHandlerImpl implements LoginHandler {
+public class AuthenticationHandlerImpl implements AuthenticationHandler {
 
     private final ReactiveUserDetailsService userDetailsService;
     private final JWTUtil jwtUtil;
@@ -29,8 +30,8 @@ public class LoginHandlerImpl implements LoginHandler {
 
     private final UserDetailsRepositoryReactiveAuthenticationManager authenticationManager;
 
-    public LoginHandlerImpl(@Qualifier("applicationUserServiceImpl") ReactiveUserDetailsService userDetailsService,
-                            JWTUtil jwtUtil, JwtConfig jwtConfig, UserDetailsRepositoryReactiveAuthenticationManager authenticationManager) {
+    public AuthenticationHandlerImpl(@Qualifier("applicationUserServiceImpl") ReactiveUserDetailsService userDetailsService,
+                                     JWTUtil jwtUtil, JwtConfig jwtConfig, UserDetailsRepositoryReactiveAuthenticationManager authenticationManager) {
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.jwtConfig = jwtConfig;
@@ -49,25 +50,30 @@ public class LoginHandlerImpl implements LoginHandler {
                         )
                                 .flatMap(authentication -> {
                                     String jwtToken = jwtUtil.generateToken((UserDetails) authentication.getPrincipal());
-                                    ResponseCookie responseCookie = jwtUtil.getCookieForToken(jwtToken);
+                                    ResponseCookie jwtCookie = jwtUtil.getCookieForToken(jwtToken);
                                     return ServerResponse
                                             .ok()
-                                            .cookies(stringResponseCookieMultiValueMap -> {
-                                                stringResponseCookieMultiValueMap.add("jwt",
-                                                        responseCookie
-                                                );
-                                            }).build();
+                                            .cookie(loggedInCookie())
+                                            .cookie(jwtCookie).build();
                                 })
                                 .onErrorResume(throwable -> {
-                                    ResponseCookie responseCookie = jwtUtil.getInvalidateCookie();
-                                    return ServerResponse.status(HttpStatus.UNAUTHORIZED).cookies(stringResponseCookieMultiValueMap -> {
-                                        stringResponseCookieMultiValueMap.add("jwt",
-                                                responseCookie
-                                        );
-                                    }).build();
+                                    ResponseCookie jwtInvalidatingCookie = jwtUtil.getInvalidateCookie();
+                                    return ServerResponse.status(HttpStatus.UNAUTHORIZED)
+                                            .cookie(loggedOutCookie())
+                                            .cookie(jwtInvalidatingCookie).build();
                                 }));
     }
 
+    @Nonnull
+    @Override
+    public Mono<ServerResponse> logoutApplicationUser(ServerRequest request) {
+        ResponseCookie jwtInvalidatingCookie = jwtUtil.getInvalidateCookie();
+        return ServerResponse.ok()
+                .cookie(loggedOutCookie())
+                .cookie(jwtInvalidatingCookie).build();
+    }
+
+    @Nonnull
     @Override
     public Mono<ServerResponse> getJwtToken(ServerRequest serverRequest) {
         return userDetailsService
@@ -83,11 +89,25 @@ public class LoginHandlerImpl implements LoginHandler {
                             .build();
                     return ServerResponse
                             .ok()
-                            .cookies(stringResponseCookieMultiValueMap -> {
-                                stringResponseCookieMultiValueMap.add("jwt",
-                                        responseCookie
-                                );
-                            }).build();
+                            .cookie(responseCookie).build();
                 });
+    }
+
+    @Nonnull
+    private ResponseCookie loggedInCookie() {
+        return ResponseCookie
+                .from("is-logged-in", "true")
+                .path("/")
+                .maxAge(Duration.ofDays(jwtConfig.getTokenExpirationAfterDays()))
+                .build();
+    }
+
+    @Nonnull
+    private ResponseCookie loggedOutCookie() {
+        return ResponseCookie
+                .from("is-logged-in", "false")
+                .path("/")
+                .maxAge(Duration.ofDays(jwtConfig.getTokenExpirationAfterDays()))
+                .build();
     }
 }

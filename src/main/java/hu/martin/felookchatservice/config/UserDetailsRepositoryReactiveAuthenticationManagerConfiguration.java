@@ -3,6 +3,7 @@ package hu.martin.felookchatservice.config;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class UserDetailsRepositoryReactiveAuthenticationManagerConfiguration {
 
     @Bean
+    @Primary
     public UserDetailsRepositoryReactiveAuthenticationManager userDetailsRepositoryReactiveAuthenticationManager(
             @Qualifier("applicationUserServiceImpl") ReactiveUserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {

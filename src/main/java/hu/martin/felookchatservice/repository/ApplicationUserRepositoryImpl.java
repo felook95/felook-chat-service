@@ -1,4 +1,4 @@
-package hu.martin.felookchatservice.auth;
+package hu.martin.felookchatservice.repository;
 
 import org.springframework.data.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;

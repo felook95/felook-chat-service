@@ -1,5 +1,7 @@
 package hu.martin.felookchatservice.jwt;
 
+import org.h2.util.geometry.JTSUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,20 +15,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
+public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
 
     private final JWTUtil jwtUtil;
 
-    public JwtAuthenticationManager(JWTUtil jwtUtil) {
+    public JwtReactiveAuthenticationManager(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-
-        return Mono.just(authentication)
+        return Mono.justOrEmpty(authentication)
                 .map(Authentication::getCredentials)
-                .map(Object::toString)
+                .cast(String.class)
+                .filter(jwtUtil::isValidRawToken)
                 .flatMap(jwtUtil::validateRawToken)
                 .map(jwtUtil::getAllClaimsFromToken)
                 .onErrorResume(throwable -> Mono.empty())

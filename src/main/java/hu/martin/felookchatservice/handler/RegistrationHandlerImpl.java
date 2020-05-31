@@ -1,7 +1,7 @@
 package hu.martin.felookchatservice.handler;
 
 import hu.martin.felookchatservice.auth.ApplicationUser;
-import hu.martin.felookchatservice.auth.ApplicationUserRepository;
+import hu.martin.felookchatservice.repository.ApplicationUserRepository;
 import hu.martin.felookchatservice.dto.mapper.ApplicationUserMapper;
 import hu.martin.felookchatservice.dto.model.ApplicationUserDto;
 import hu.martin.felookchatservice.security.ApplicationUserRole;

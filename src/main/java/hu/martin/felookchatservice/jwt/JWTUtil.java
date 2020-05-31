@@ -40,14 +40,7 @@ public class JWTUtil {
 
     public Mono<String> validateRawToken(String rawToken) {
         return Mono.just(rawToken)
-                .map(this::isValidRawToken)
-                .flatMap(isValid -> {
-                    if (isValid) {
-                        return Mono.just(rawToken.replace(jwtConfig.getTokenPrefix(), ""));
-                    } else {
-                        return Mono.error(new IllegalStateException("Not valid rawToken"));
-                    }
-                });
+                .flatMap(isValid -> Mono.just(rawToken.replace(jwtConfig.getTokenPrefix(), "")));
     }
 
     public String generateToken(UserDetails userDetails) {

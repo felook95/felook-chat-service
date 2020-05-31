@@ -1,4 +1,4 @@
-package hu.martin.felookchatservice.auth;
+package hu.martin.felookchatservice.repository;
 
 import reactor.core.publisher.Mono;
 

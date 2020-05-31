@@ -1,5 +1,6 @@
-package hu.martin.felookchatservice.auth;
+package hu.martin.felookchatservice.repository;
 
+import hu.martin.felookchatservice.auth.ApplicationUser;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 

@@ -6,10 +6,14 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 
-public interface LoginHandler {
+public interface AuthenticationHandler {
 
     @Nonnull
     Mono<ServerResponse> loginApplicationUser(ServerRequest request);
 
+    @Nonnull
+    Mono<ServerResponse> logoutApplicationUser(ServerRequest request);
+
+    @Nonnull
     Mono<ServerResponse> getJwtToken(ServerRequest serverRequest);
 }

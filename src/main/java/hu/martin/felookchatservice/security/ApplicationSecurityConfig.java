@@ -2,6 +2,7 @@ package hu.martin.felookchatservice.security;
 
 import hu.martin.felookchatservice.jwt.JwtConfig;
 import hu.martin.felookchatservice.jwt.JwtServerAuthenticationConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +23,7 @@ public class ApplicationSecurityConfig {
     private final ReactiveAuthenticationManager reactiveAuthenticationManager;
     private final JwtServerAuthenticationConverter jwtServerAuthenticationConverter;
 
-    public ApplicationSecurityConfig(ReactiveAuthenticationManager reactiveAuthenticationManager, JwtServerAuthenticationConverter jwtServerAuthenticationConverter) {
+    public ApplicationSecurityConfig(@Qualifier("jwtReactiveAuthenticationManager") ReactiveAuthenticationManager reactiveAuthenticationManager, JwtServerAuthenticationConverter jwtServerAuthenticationConverter) {
         this.reactiveAuthenticationManager = reactiveAuthenticationManager;
         this.jwtServerAuthenticationConverter = jwtServerAuthenticationConverter;
     }
