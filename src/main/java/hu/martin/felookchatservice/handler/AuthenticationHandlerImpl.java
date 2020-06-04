@@ -37,7 +37,7 @@ public class AuthenticationHandlerImpl implements AuthenticationHandler {
 
     @Nonnull
     @Override
-    public Mono<ServerResponse> loginApplicationUser(ServerRequest request) {
+    public Mono<ServerResponse> loginApplicationUser(@Nonnull ServerRequest request) {
         return request.bodyToMono(AuthRequest.class)
                 .flatMap(authRequest ->
                 {

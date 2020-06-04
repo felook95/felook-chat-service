@@ -32,7 +32,7 @@ public class RegistrationHandlerImpl implements RegistrationHandler {
 
     @Nonnull
     @Override
-    public Mono<ServerResponse> registerApplicationUser(ServerRequest request) {
+    public Mono<ServerResponse> registerApplicationUser(@Nonnull ServerRequest request) {
         return request.bodyToMono(ApplicationUserDto.class).flatMap(applicationUserDto ->
                 applicationUserRepository.existsByUsername(applicationUserDto.getUsername())
                         .flatMap(isExists -> {
@@ -49,7 +49,7 @@ public class RegistrationHandlerImpl implements RegistrationHandler {
 
     }
 
-    private ApplicationUser getApplicationUserToSaveWithDefaults(ApplicationUserDto applicationUserDto) {
+    private ApplicationUser getApplicationUserToSaveWithDefaults(@Nonnull ApplicationUserDto applicationUserDto) {
         return new ApplicationUser()
                 .setId(null)
                 .setUsername(applicationUserDto.getUsername())
