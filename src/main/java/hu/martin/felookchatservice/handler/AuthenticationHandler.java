@@ -14,6 +14,4 @@ public interface AuthenticationHandler {
     @Nonnull
     Mono<ServerResponse> logoutApplicationUser(ServerRequest request);
 
-    @Nonnull
-    Mono<ServerResponse> getJwtToken(ServerRequest serverRequest);
 }

@@ -14,7 +14,6 @@ public class AuthenticationRouter {
     @Bean
     public RouterFunction<ServerResponse> authenticationRoute(AuthenticationHandler authenticationHandler) {
         return route().POST("/login", authenticationHandler::loginApplicationUser)
-                .GET("/login", authenticationHandler::getJwtToken)
                 .POST("/logout", authenticationHandler::logoutApplicationUser)
                 .build();
     }

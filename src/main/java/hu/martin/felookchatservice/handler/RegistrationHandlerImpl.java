@@ -1,9 +1,9 @@
 package hu.martin.felookchatservice.handler;
 
 import hu.martin.felookchatservice.auth.ApplicationUser;
-import hu.martin.felookchatservice.repository.ApplicationUserRepository;
-import hu.martin.felookchatservice.dto.mapper.ApplicationUserMapper;
+import hu.martin.felookchatservice.auth.AuthenticationCookieAndResponseProvider;
 import hu.martin.felookchatservice.dto.model.ApplicationUserDto;
+import hu.martin.felookchatservice.repository.ApplicationUserRepository;
 import hu.martin.felookchatservice.security.ApplicationUserRole;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,10 +19,15 @@ public class RegistrationHandlerImpl implements RegistrationHandler {
 
     private final ApplicationUserRepository applicationUserRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationCookieAndResponseProvider authenticationCookieAndResponseProvider;
 
-    public RegistrationHandlerImpl(ApplicationUserRepository applicationUserRepository, PasswordEncoder passwordEncoder) {
+    public RegistrationHandlerImpl(
+            ApplicationUserRepository applicationUserRepository,
+            PasswordEncoder passwordEncoder,
+            AuthenticationCookieAndResponseProvider authenticationCookieAndResponseProvider) {
         this.applicationUserRepository = applicationUserRepository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationCookieAndResponseProvider = authenticationCookieAndResponseProvider;
     }
 
     @Nonnull
@@ -34,26 +39,25 @@ public class RegistrationHandlerImpl implements RegistrationHandler {
                             if (isExists) {
                                 return ServerResponse.status(HttpStatus.CONFLICT).bodyValue("User exists");
                             } else {
-                                ApplicationUser applicationUserToSave =
-                                        new ApplicationUser()
-                                                .setId(null)
-                                                .setUsername(applicationUserDto.getUsername())
-                                                .setPassword(passwordEncoder.encode(applicationUserDto.getPassword()))
-                                                .setRole(ApplicationUserRole.USER.name())
-                                                .setAccountNonExpired(true)
-                                                .setAccountNonLocked(true)
-                                                .setCredentialsNonExpired(true)
-                                                .setEnabled(applicationUserDto.isEnabled());
+                                ApplicationUser applicationUserToSave = getApplicationUserToSaveWithDefaults(applicationUserDto);
 
                                 return applicationUserRepository.save(applicationUserToSave)
-                                        .map(ApplicationUserMapper::toApplicationUserDto)
-                                        .flatMap(applicationUserDto1 ->
-                                                ServerResponse
-                                                        .ok()
-                                                        .body(Mono.just(applicationUserDto), ApplicationUserDto.class));
+                                        .flatMap(authenticationCookieAndResponseProvider::getLoginResponse);
 
                             }
                         }));
 
+    }
+
+    private ApplicationUser getApplicationUserToSaveWithDefaults(ApplicationUserDto applicationUserDto) {
+        return new ApplicationUser()
+                .setId(null)
+                .setUsername(applicationUserDto.getUsername())
+                .setPassword(passwordEncoder.encode(applicationUserDto.getPassword()))
+                .setRole(ApplicationUserRole.USER.name())
+                .setAccountNonExpired(true)
+                .setAccountNonLocked(true)
+                .setCredentialsNonExpired(true)
+                .setEnabled(true);
     }
 }

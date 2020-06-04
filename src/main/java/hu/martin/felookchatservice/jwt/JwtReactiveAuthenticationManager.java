@@ -32,6 +32,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
                 .flatMap(jwtUtil::validateRawToken)
                 .map(jwtUtil::getAllClaimsFromToken)
                 .onErrorResume(throwable -> Mono.empty())
+                .filter(claims -> claims.get("authorities") != null)
                 .map(claims -> {
                     List<Map<String, String>> authorities = (List<Map<String, String>>) claims.get("authorities");
 
