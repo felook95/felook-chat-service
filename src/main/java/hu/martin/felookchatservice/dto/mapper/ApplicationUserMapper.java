@@ -10,6 +10,7 @@ public class ApplicationUserMapper {
         return new ApplicationUserDto()
                 .setId(applicationUser.getId())
                 .setUsername(applicationUser.getUsername())
+                .setRole(applicationUser.getRole())
                 .setEnabled(applicationUser.isEnabled());
     }
 

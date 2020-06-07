@@ -10,6 +10,7 @@ public class UserMapper {
     public static UserDto toUserDto(User user) {
         return new UserDto()
                 .setId(user.getId())
-                .setUsername(user.getUsername());
+                .setUsername(user.getUsername())
+                .setUserProfile(UserProfileMapper.toUserProfileDto(user.getUserProfile()));
     }
 }

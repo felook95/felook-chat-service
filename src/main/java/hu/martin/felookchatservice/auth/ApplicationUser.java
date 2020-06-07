@@ -1,5 +1,6 @@
 package hu.martin.felookchatservice.auth;
 
+import hu.martin.felookchatservice.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,9 @@ public class ApplicationUser implements UserDetails {
     @Column("id")
     private Long id;
 
+    @Column("user_id")
+    private Long userId;
+
     @Column("password")
     private String password;
 
@@ -36,6 +40,9 @@ public class ApplicationUser implements UserDetails {
 
     @Transient
     private Set<? extends GrantedAuthority> grantedAuthorities;
+
+    @Transient
+    private User user;
 
     @Column("is_account_non_expired")
     private boolean isAccountNonExpired;

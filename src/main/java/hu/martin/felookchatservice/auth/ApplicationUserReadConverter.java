@@ -13,6 +13,7 @@ public class ApplicationUserReadConverter implements Converter<Row, ApplicationU
     @Override
     public ApplicationUser convert(@Nonnull Row row) {
         Integer id = row.get("id", Integer.class);
+        Integer userId = row.get("user_id", Integer.class);
         String username = row.get("username", String.class);
         String password = row.get("password", String.class);
         String role = row.get("role", String.class);
@@ -22,6 +23,7 @@ public class ApplicationUserReadConverter implements Converter<Row, ApplicationU
         Boolean isEnabled = row.get("is_enabled", Boolean.class);
 
         Assert.notNull(id, "Id must not be null!");
+        Assert.notNull(userId, "UserId must not be null!");
         Assert.notNull(isAccountNonExpired, "isAccountNonExpired must not be null!");
         Assert.notNull(isAccountNonLocked, "isAccountNonLocked must not be null!");
         Assert.notNull(isCredentialsNonExpired, "isCredentialsNonExpired must not be null!");
@@ -29,15 +31,16 @@ public class ApplicationUserReadConverter implements Converter<Row, ApplicationU
 
         return new ApplicationUser(
                 Long.valueOf(id),
+                Long.valueOf(userId),
                 password,
                 username,
                 role,
                 ApplicationUserRole.valueOf(role).getGrantedAuthorities(),
+                null,
                 isAccountNonExpired,
                 isAccountNonLocked,
                 isCredentialsNonExpired,
                 isEnabled
-
         );
     }
 }
